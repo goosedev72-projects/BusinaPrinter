@@ -1,4 +1,4 @@
-name: "Build & Release"
+name: "Build Android .apk/.aab"
 
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ jobs:
     steps:
         #1 Checkout repository
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
         #2 setup java
       - name: Set Up Java
@@ -51,11 +51,3 @@ jobs:
           path: |
             build/*.apk
             build/*.aab
-
-        #11 create release with those builds 
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "build/*.apk,build*.aab"
-          tag: v1.0.0
-          token: ${{ secrets.TOKEN }}
