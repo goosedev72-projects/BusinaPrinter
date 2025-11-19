@@ -2,16 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'ble_tester_page.dart';
 
-class UsageGuidePage extends StatelessWidget {
-  const UsageGuidePage({Key? key}) : super(key: key);
+class UsageGuidePage extends StatefulWidget {
+  final Function(Locale) changeLocaleCallback;
 
+  const UsageGuidePage({Key? key, required this.changeLocaleCallback}) : super(key: key);
+
+  @override
+  State<UsageGuidePage> createState() => _UsageGuidePageState();
+}
+
+class _UsageGuidePageState extends State<UsageGuidePage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.longText), // Using longText as "Usage Guide" 
+        title: Text(l10n.usageGuide ?? "Usage Guide"),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Padding(
@@ -25,70 +32,55 @@ class UsageGuidePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Complete Guide to Using Your Thermal Printer App',
+                      l10n.appTitle + ' - ' + l10n.usageGuideTips,
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     const SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const BleTesterPage()),
-                        );
-                      },
-                      icon: const Icon(Icons.bluetooth),
-                      label: const Text('BLE Testing Tool'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
                     _buildStepCard(
-                      '1. Prerequisites & Initial Setup',
-                      '• Ensure your thermal printer is fully charged\n• Enable Bluetooth on your mobile device\n• Make sure the printer is turned on and in pairing mode\n• Install the Busina Print App from the app store\n• Grant necessary permissions when prompted',
+                      l10n.usageGuideStep1,
+                      l10n.usageGuideStep1Desc,
                       context,
                     ),
                     const SizedBox(height: 16),
                     _buildStepCard(
-                      '2. Connecting to Your Printer',
-                      '• Open the Busina Print App\n• Look for the Bluetooth connection icon in the top-right corner\n• Tap the icon to start scanning for available printers\n• Select your printer from the list (common names: GT01, GT02, GB03, etc.)\n• Wait for the connection confirmation message\n• A green Bluetooth icon indicates a successful connection',
+                      l10n.usageGuideStep2,
+                      l10n.usageGuideStep2Desc,
                       context,
                     ),
                     const SizedBox(height: 16),
                     _buildStepCard(
-                      '3. Printing Images from Your Device',
-                      '• Navigate to the main "Print" tab\n• Tap the "Select Image" button (camera icon) to choose from your photo gallery\n• Select the image you want to print\n• Preview the image in the app\n• Choose between normal print or rotated print (for longer prints)\n• Tap the "Print" button and wait for the printing process to complete\n• Note: Image quality can be adjusted in Settings before printing',
+                      l10n.usageGuideStep3,
+                      l10n.usageGuideStep3Desc,
                       context,
                     ),
                     const SizedBox(height: 16),
                     _buildStepCard(
-                      '4. Printing Text',
-                      '• Go to the main "Print" tab\n• Find the text input section\n• Enter your text in the provided text field\n• Use the "Print Text" button for standard printing\n• Use "Horizontal Printing" for long, continuous text that extends the paper\n• Text formatting will be preserved based on your settings',
+                      l10n.usageGuideStep4,
+                      l10n.usageGuideStep4Desc,
                       context,
                     ),
                     const SizedBox(height: 16),
                     _buildStepCard(
-                      '5. Using Image Packs (Organizing Your Prints)',
-                      '• Navigate to the "Packs" tab\n• Create new image packs or browse existing ones\n• Add images to packs for organized printing\n• Access and print images directly from your saved packs\n• Great for frequently printed images or themed collections',
+                      l10n.usageGuideStep5,
+                      l10n.usageGuideStep5Desc,
                       context,
                     ),
                     const SizedBox(height: 16),
                     _buildStepCard(
-                      '6. Customizing Print Settings',
-                      '• Access settings via the gear icon in the top-right\n• Adjust print quality using the energy level setting:\n  - Higher energy: darker, more intense prints (uses more battery)\n  - Lower energy: lighter prints (conserves battery)\n• Select dithering algorithms for image processing:\n  - Floyd-Steinberg: good for general images\n  - Atkinson: good for line art and simple graphics\n  - Burkes: good middle ground\n  - Stucki: good for detailed images\n• Set number of copies for automatic repeated printing\n• Adjust threshold and inversion settings for optimal image results',
+                      l10n.usageGuideStep6,
+                      l10n.usageGuideStep6Desc,
                       context,
                     ),
                     const SizedBox(height: 16),
                     _buildStepCard(
-                      '7. Advanced Features',
-                      '• Camera Integration: Take photos directly in the app for immediate printing\n• Image Rotation: Use the rotate feature for different print orientations\n• Printer Status: Check connection status and printer information\n• Disconnect: Safely disconnect from the printer when finished',
+                      l10n.usageGuideStep7,
+                      l10n.usageGuideStep7Desc,
                       context,
                     ),
                     const SizedBox(height: 16),
                     _buildStepCard(
-                      '8. Troubleshooting Common Issues',
-                      '• Connection Problems:\n  - Ensure printer is powered on and in range\n  - Try turning Bluetooth off and on\n  - Restart the app\n  - Power cycle the printer (turn off and on)\n• Poor Print Quality:\n  - Adjust energy level in settings\n  - Try different dithering algorithms\n  - Check if printer has sufficient battery\n• Image Not Printing:\n  - Verify printer connection status\n  - Check image format (JPG, PNG supported)\n  - Ensure image isn\'t too large',
+                      l10n.usageGuideStep8,
+                      l10n.usageGuideStep8Desc,
                       context,
                     ),
                     const SizedBox(height: 16),
@@ -129,6 +121,8 @@ class UsageGuidePage extends StatelessWidget {
   }
 
   Widget _buildTipsCard(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Card(
       color: Colors.blue.shade50,
       child: Padding(
@@ -137,7 +131,7 @@ class UsageGuidePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Advanced Printer Tips & Best Practices',
+              l10n.usageGuideTips,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.blue,
@@ -145,7 +139,7 @@ class UsageGuidePage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              '• For best image results, use high-contrast images with clear subjects\n• Darker energy levels (8-10) produce intense prints but drain battery faster\n• Lighter energy levels (2-4) conserve battery but may produce faint prints\n• Long prints can take 2-5 minutes depending on complexity and size\n• For text printing, avoid very long lines; shorter, well-formatted text prints better\n• Store thermal paper in a cool, dry place to maintain print quality\n• Clean the printer head regularly for optimal performance\n• If prints are faint or streaked, consider replacing thermal paper roll\n• For continuous text printing, use the horizontal printing feature\n• Test print settings on a sample image before printing important documents',
+              l10n.usageGuideTipsDesc,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],

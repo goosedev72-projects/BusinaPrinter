@@ -10,7 +10,9 @@ import '../core/printing/printer_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ImagePacksPage extends StatefulWidget {
-  const ImagePacksPage({Key? key}) : super(key: key);
+  final Function(Locale) changeLocaleCallback;
+
+  const ImagePacksPage({Key? key, required this.changeLocaleCallback}) : super(key: key);
 
   @override
   _ImagePacksPageState createState() => _ImagePacksPageState();
@@ -534,7 +536,7 @@ class _PackDetailPageState extends State<PackDetailPage> {
   void _printImage(PackImage image) async {
     if (!_printerService.isConnected) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.connectPrinter)),
+        SnackBar(content: Text(AppLocalizations.of(context)!.printerNotConnected)),
       );
       return;
     }

@@ -9,7 +9,9 @@ import '../core/data/models/print_settings.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PrintingPage extends StatefulWidget {
-  const PrintingPage({Key? key}) : super(key: key);
+  final Function(Locale) changeLocaleCallback;
+
+  const PrintingPage({Key? key, required this.changeLocaleCallback}) : super(key: key);
 
   @override
   _PrintingPageState createState() => _PrintingPageState();
@@ -72,7 +74,7 @@ class _PrintingPageState extends State<PrintingPage> {
     }
 
     if (!_printerService.isConnected) {
-      _showSnackBar(AppLocalizations.of(context)!.connectPrinter);
+      _showSnackBar(AppLocalizations.of(context)!.printerNotConnected);
       return;
     }
 
@@ -92,7 +94,7 @@ class _PrintingPageState extends State<PrintingPage> {
     }
 
     if (!_printerService.isConnected) {
-      _showSnackBar(AppLocalizations.of(context)!.connectPrinter);
+      _showSnackBar(AppLocalizations.of(context)!.printerNotConnected);
       return;
     }
 
@@ -112,7 +114,7 @@ class _PrintingPageState extends State<PrintingPage> {
     }
 
     if (!_printerService.isConnected) {
-      _showSnackBar(AppLocalizations.of(context)!.connectPrinter);
+      _showSnackBar(AppLocalizations.of(context)!.printerNotConnected);
       return;
     }
 
@@ -132,7 +134,7 @@ class _PrintingPageState extends State<PrintingPage> {
     }
 
     if (!_printerService.isConnected) {
-      _showSnackBar(AppLocalizations.of(context)!.connectPrinter);
+      _showSnackBar(AppLocalizations.of(context)!.printerNotConnected);
       return;
     }
 
@@ -163,6 +165,13 @@ class _PrintingPageState extends State<PrintingPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           IconButton(
+            icon: const Icon(Icons.camera_alt),
+            onPressed: () async {
+              await _captureImage();
+            },
+            tooltip: l10n.scan,
+          ),
+          IconButton(
             icon: Icon(_isConnected ? Icons.print : Icons.print_disabled),
             onPressed: _isConnected ? null : () async {
               bool connected = await _printerService.connectToPrinter();
@@ -172,7 +181,7 @@ class _PrintingPageState extends State<PrintingPage> {
               if (connected) {
                 _showSnackBar(l10n.printerConnected);
               } else {
-                _showSnackBar(l10n.connectPrinter);
+                _showSnackBar(l10n.connectionFailed);
               }
             },
           ),
@@ -194,11 +203,13 @@ class _PrintingPageState extends State<PrintingPage> {
                       color: _isConnected ? Colors.green : Colors.red,
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      _isConnected ? l10n.printerConnected : l10n.connectPrinter,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: _isConnected ? Colors.green : Colors.red,
+                    Expanded(
+                      child: Text(
+                        _isConnected ? l10n.printerConnected : l10n.printerNotConnected,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: _isConnected ? Colors.green : Colors.red,
+                        ),
                       ),
                     ),
                   ],
@@ -211,6 +222,8 @@ class _PrintingPageState extends State<PrintingPage> {
             // Image selection buttons
             Wrap(
               spacing: 8,
+              runSpacing: 8,
+              alignment: WrapAlignment.center,
               children: [
                 ElevatedButton.icon(
                   onPressed: _selectImage,
@@ -286,6 +299,8 @@ class _PrintingPageState extends State<PrintingPage> {
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 8,
+                      runSpacing: 8,
+                      alignment: WrapAlignment.center,
                       children: [
                         ElevatedButton.icon(
                           onPressed: _printText,
@@ -318,8 +333,10 @@ class _PrintingPageState extends State<PrintingPage> {
                     ),
                     const SizedBox(height: 8),
                     
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      alignment: WrapAlignment.center,
                       children: [
                         OutlinedButton.icon(
                           onPressed: !_isConnected ? null : () async {
@@ -338,10 +355,10 @@ class _PrintingPageState extends State<PrintingPage> {
                             setState(() {
                               _isConnected = false;
                             });
-                            _showSnackBar(l10n.connectPrinter);
+                            _showSnackBar(l10n.disconnectPrinter);
                           },
                           icon: const Icon(Icons.bluetooth_disabled),
-                          label: Text(l10n.connectPrinter),
+                          label: Text(l10n.disconnectPrinter),
                         ),
                       ],
                     ),

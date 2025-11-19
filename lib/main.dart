@@ -7,18 +7,47 @@ import 'pages/usage_guide_page.dart';
 import 'pages/image_packs_page.dart';
 import 'pages/ble_tester_page.dart';
 import 'pages/debug_page.dart';
+import 'core/utils/locale_manager.dart';
 
 void main() {
   runApp(const BusinaPrintApp());
 }
 
-class BusinaPrintApp extends StatelessWidget {
+class BusinaPrintApp extends StatefulWidget {
   const BusinaPrintApp({Key? key}) : super(key: key);
+
+  @override
+  State<BusinaPrintApp> createState() => _BusinaPrintAppState();
+}
+
+class _BusinaPrintAppState extends State<BusinaPrintApp> {
+  Locale? _selectedLocale;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLocale();
+  }
+
+  Future<void> _loadLocale() async {
+    final locale = await LocaleManager.getSelectedLocale();
+    setState(() {
+      _selectedLocale = locale;
+    });
+  }
+
+  void _changeLocale(Locale newLocale) {
+    setState(() {
+      _selectedLocale = newLocale;
+    });
+    LocaleManager.setSelectedLocale(newLocale);
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Busina Print App',
+      locale: _selectedLocale,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -33,13 +62,17 @@ class BusinaPrintApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: HomePage(
+        changeLocaleCallback: _changeLocale,
+      ),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final Function(Locale) changeLocaleCallback;
+
+  const HomePage({Key? key, required this.changeLocaleCallback}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -54,15 +87,15 @@ class _HomePageState extends State<HomePage> {
     
     // Main pages for the bottom navigation - removed ImagePacksPage to hide stickers tab
     final List<Widget> _mainPages = [
-      const PrintingPage(),  // Index 0 - Print page
-      const PrintSettingsPage(),  // Index 1 - Settings page (was Index 2)
+      PrintingPage(changeLocaleCallback: widget.changeLocaleCallback),  // Index 0 - Print page
+      PrintSettingsPage(changeLocaleCallback: widget.changeLocaleCallback),  // Index 1 - Settings page (was Index 2)
     ];
 
     // Additional pages accessible through app bar
     final List<Widget> _additionalPages = [
-      const UsageGuidePage(),
-      const DebugPage(),
-      const ImagePacksPage(), // Still available but not in main navigation
+      UsageGuidePage(changeLocaleCallback: widget.changeLocaleCallback),
+      DebugPage(),
+      ImagePacksPage(changeLocaleCallback: widget.changeLocaleCallback), // Still available but not in main navigation
     ];
 
     // Combined list for navigation
@@ -88,7 +121,7 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const UsageGuidePage()),
+                MaterialPageRoute(builder: (context) => UsageGuidePage(changeLocaleCallback: widget.changeLocaleCallback)),
               );
             },
             tooltip: l10n.usageGuide ?? "Usage Guide", // Fallback if not defined

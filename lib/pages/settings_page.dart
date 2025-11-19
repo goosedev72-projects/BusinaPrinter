@@ -3,7 +3,9 @@ import '../core/data/models/print_settings.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PrintSettingsPage extends StatefulWidget {
-  const PrintSettingsPage({Key? key}) : super(key: key);
+  final Function(Locale) changeLocaleCallback;
+
+  const PrintSettingsPage({Key? key, required this.changeLocaleCallback}) : super(key: key);
 
   @override
   _PrintSettingsPageState createState() => _PrintSettingsPageState();
@@ -34,6 +36,37 @@ class _PrintSettingsPageState extends State<PrintSettingsPage> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
+            // Language Settings
+            Card(
+              child: ExpansionTile(
+                title: Text(l10n.language),
+                children: [
+                  RadioListTile<String>(
+                    title: Text(l10n.english),
+                    value: 'en',
+                    groupValue: Localizations.localeOf(context).languageCode,
+                    onChanged: (value) {
+                      if (value != null) {
+                        widget.changeLocaleCallback(const Locale('en', ''));
+                      }
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: Text(l10n.russian),
+                    value: 'ru',
+                    groupValue: Localizations.localeOf(context).languageCode,
+                    onChanged: (value) {
+                      if (value != null) {
+                        widget.changeLocaleCallback(const Locale('ru', ''));
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 16),
+            
             // Image Processing Settings
             Card(
               child: ExpansionTile(
