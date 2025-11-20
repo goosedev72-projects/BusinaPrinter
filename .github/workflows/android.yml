@@ -41,5 +41,5 @@ jobs:
         with:
           name: Releases
           path: |
-            build/*.apk
-            build/*.aab
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/flutter-aab/app-release.aab
