@@ -1,16 +1,36 @@
-# busina_print_app
+# Busina Print
 
-A new Flutter project.
+The app for cat printers. 🐱🖨️
+
+## Supported Printers
+- GB* (tested on GB03)
+- GT* (not tested, like GT01)
+- Pretty much everything that uses iPrint app (not to be confused with Epson iPrint)
 
 ## Getting Started
+Compiled binary (release and ci builds) are only on Android for a moment. Download the latest from the release tab.
 
-This project is a starting point for a Flutter application.
+Building is pretty much like every other flutter app:
+```
+flutter pub get
+flutter gen-l10n
+flutter build ... --release # apk, aab, ipa, windows, macos, linux
+```
 
-A few resources to get you started if this is your first Flutter project:
+Run the test server for development and testing:
+```
+flutter pub get
+flutter gen-l10n
+flutter run   # Use --release flag to test without debugging
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Contributing
+Send a pull request! You are absolutely welcome! 😄 Or open an issue/text me on TG (@GooseDev72)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Credits
+[catprinter](https://github.com/rbaron/catprinter.git)
+The official iPrint app (search yourself, decompiled using only JaDX)
+
+<3 to the Flutter team!
+
+
