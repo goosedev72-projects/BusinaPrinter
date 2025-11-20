@@ -7,7 +7,7 @@ import '../core/service_locator.dart';
 import '../pages/photo_editing_page.dart';
 import '../core/image_processing/image_processor.dart';
 import '../core/printing/printer_service.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:busina_print_app/l10n/app_localizations.dart';
 
 class ImagePacksPage extends StatefulWidget {
   final Function(Locale) changeLocaleCallback;

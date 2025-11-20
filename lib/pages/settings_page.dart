@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/data/models/print_settings.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:busina_print_app/l10n/app_localizations.dart';
 
 class PrintSettingsPage extends StatefulWidget {
   final Function(Locale) changeLocaleCallback;

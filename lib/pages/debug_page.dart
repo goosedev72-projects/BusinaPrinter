@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:busina_print_app/l10n/app_localizations.dart';
 import 'ble_tester_page.dart';
 
 class DebugPage extends StatefulWidget {

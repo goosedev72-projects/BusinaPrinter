@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:image/image.dart' as img_package;
 import '../core/image_processing/image_processor.dart';
 import '../core/data/models/print_settings.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:busina_print_app/l10n/app_localizations.dart';
 
 class PhotoEditingPage extends StatefulWidget {
   final Uint8List? initialImage;

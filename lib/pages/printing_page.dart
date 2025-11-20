@@ -6,7 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import '../core/printing/printer_service.dart';
 import '../core/service_locator.dart';
 import '../core/data/models/print_settings.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:busina_print_app/l10n/app_localizations.dart';
 
 class PrintingPage extends StatefulWidget {
   final Function(Locale) changeLocaleCallback;
