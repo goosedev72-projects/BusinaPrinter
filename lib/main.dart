@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:busina_print_app/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:dynamic_color/dynamic_color.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/printing_page.dart';
 import 'pages/settings_page.dart';
 import 'pages/usage_guide_page.dart';
 import 'pages/image_packs_page.dart';
-import 'pages/ble_tester_page.dart';
 import 'pages/debug_page.dart';
 import 'core/utils/locale_manager.dart';
 
@@ -22,17 +23,22 @@ class BusinaPrintApp extends StatefulWidget {
 
 class _BusinaPrintAppState extends State<BusinaPrintApp> {
   Locale? _selectedLocale;
+  bool _isDarkMode = false;
 
   @override
   void initState() {
     super.initState();
-    _loadLocale();
+    _loadPreferences();
   }
 
-  Future<void> _loadLocale() async {
+  Future<void> _loadPreferences() async {
     final locale = await LocaleManager.getSelectedLocale();
+    final prefs = await SharedPreferences.getInstance();
+    final isDarkMode = prefs.getBool('isDarkMode') ?? false;
+
     setState(() {
       _selectedLocale = locale;
+      _isDarkMode = isDarkMode;
     });
   }
 
@@ -43,36 +49,70 @@ class _BusinaPrintAppState extends State<BusinaPrintApp> {
     LocaleManager.setSelectedLocale(newLocale);
   }
 
+  void _toggleDarkMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    final newDarkMode = !_isDarkMode;
+    await prefs.setBool('isDarkMode', newDarkMode);
+
+    setState(() {
+      _isDarkMode = newDarkMode;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Busina Print App',
-      locale: _selectedLocale,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', ''),
-        Locale('ru', ''),
-      ],
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: HomePage(
-        changeLocaleCallback: _changeLocale,
-      ),
+    return DynamicColorBuilder(
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+        ColorScheme lightColorScheme = lightDynamic ?? ColorScheme.fromSeed(seedColor: Colors.deepPurple);
+        ColorScheme darkColorScheme = darkDynamic ?? ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
+        );
+
+        return MaterialApp(
+          title: 'Busina Print App',
+          locale: _selectedLocale,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', ''),
+            Locale('ru', ''),
+          ],
+          theme: ThemeData(
+            useMaterial3: true,
+            colorScheme: _isDarkMode ? darkColorScheme : lightColorScheme,
+          ),
+          darkTheme: ThemeData(
+            useMaterial3: true,
+            colorScheme: darkColorScheme,
+          ),
+          themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          home: HomePage(
+            changeLocaleCallback: _changeLocale,
+            toggleDarkModeCallback: _toggleDarkMode,
+            isDarkMode: _isDarkMode,
+          ),
+        );
+      },
     );
   }
 }
 
 class HomePage extends StatefulWidget {
   final Function(Locale) changeLocaleCallback;
+  final VoidCallback toggleDarkModeCallback;
+  final bool isDarkMode;
 
-  const HomePage({Key? key, required this.changeLocaleCallback}) : super(key: key);
+  const HomePage({
+    Key? key,
+    required this.changeLocaleCallback,
+    required this.toggleDarkModeCallback,
+    required this.isDarkMode,
+  }) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -84,7 +124,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     // Main pages for the bottom navigation - removed ImagePacksPage to hide stickers tab
     final List<Widget> _mainPages = [
       PrintingPage(changeLocaleCallback: widget.changeLocaleCallback),  // Index 0 - Print page
@@ -106,6 +146,11 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(l10n.appTitle),
         actions: [
+          IconButton(
+            icon: Icon(widget.isDarkMode ? Icons.light_mode : Icons.dark_mode),
+            onPressed: widget.toggleDarkModeCallback,
+            tooltip: widget.isDarkMode ? 'Switch to light mode' : 'Switch to dark mode',
+          ),
           IconButton(
             icon: const Icon(Icons.bug_report), // Changed to debug icon
             onPressed: () {
